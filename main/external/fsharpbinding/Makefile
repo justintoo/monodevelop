@@ -23,7 +23,8 @@ endif
 
 .PHONY: all
 
-all: build
+#all: build
+all:
 
 build: MonoDevelop.FSharpBinding/MonoDevelop.FSharp.fsproj MonoDevelop.FSharpBinding/FSharpBinding.addin.xml
 	(xbuild MonoDevelop.FSharp.sln /p:Configuration=$(config))
@@ -33,8 +34,9 @@ pack: build
 	@-mkdir -p pack/$(config)
 	$(MDTOOL) setup pack ../../../main/build/AddIns/BackendBindings/FSharpBinding.dll -d:pack/$(config)
 
-install: pack
-	$(MDTOOL) setup install -y pack/$(config)/MonoDevelop.FSharpBinding_$(MDVERSION4).mpack 
+install:
+#install: pack
+#	$(MDTOOL) setup install -y pack/$(config)/MonoDevelop.FSharpBinding_$(MDVERSION4).mpack 
 
 uninstall:
 	$(MDTOOL) setup uninstall MonoDevelop.FSharpBinding

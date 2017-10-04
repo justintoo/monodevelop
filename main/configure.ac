@@ -28,9 +28,9 @@ if test "x$MCS" = "x" ; then
   AC_MSG_ERROR([Can't find "mcs" in your PATH])
 fi
 
-if test "x$FSHARPC" = "x" ; then
-  AC_MSG_ERROR([Can't find "fsharpc" in your PATH])
-fi
+#if test "x$FSHARPC" = "x" ; then
+#  AC_MSG_ERROR([Can't find "fsharpc" in your PATH])
+#fi
 
 dnl Find pkg-config
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
