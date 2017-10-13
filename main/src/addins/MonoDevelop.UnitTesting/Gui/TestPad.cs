@@ -1,4 +1,4 @@
-﻿//
+//
 // TestPad.cs
 //
 // Author:
@@ -355,7 +355,10 @@ namespace MonoDevelop.UnitTesting
 			
 			foreach (UnitTest t in UnitTestService.RootTests)
 				TreeView.AddChild (t);
-			
+
+			foreach (UnitTest tst in UnitTestService.RootTests)
+				tst.RefreshResult();
+
 			base.TreeView.Tree.Name = "unitTestBrowserTree";
 		}
 		
@@ -530,7 +533,7 @@ namespace MonoDevelop.UnitTesting
 		{
 			foreach (var test in tests)
 				UnitTestService.ResetResult (test.RootTest);
-			
+
 			this.buttonRunAll.Sensitive = false;
 			this.buttonStop.Sensitive = true;
 
@@ -539,9 +542,11 @@ namespace MonoDevelop.UnitTesting
 			if (bringToFront)
 				IdeApp.Workbench.GetPad<TestPad> ().BringToFront ();
 			runningTestOperation = UnitTestService.RunTests (tests, context);
-			runningTestOperation.Task.ContinueWith (t => OnTestSessionCompleted (), TaskScheduler.FromCurrentSynchronizationContext ());
+			var rootTest = tests.FirstOrDefault()?.RootTest;
+			runningTestOperation.Task.ContinueWith (t => OnTestSessionCompleted (rootTest), TaskScheduler.FromCurrentSynchronizationContext ());
 			return runningTestOperation;
 		}
+
 		
 		void OnRunAllClicked (object sender, EventArgs args)
 		{
@@ -552,17 +557,16 @@ namespace MonoDevelop.UnitTesting
 		{
 			RunTests (TreeView.GetSelectedNodes (), mode);
 		}
-		
-		void OnTestSessionCompleted ()
+
+		private void OnTestSessionCompleted (UnitTest rootTest)
 		{
+			UnitTestService.RefreshResult (rootTest);
 			RefreshDetails ();
 			runningTestOperation = null;
 			this.buttonRunAll.Sensitive = true;
 			this.buttonStop.Sensitive = false;
-
 		}
-
-
+	
 		protected override void OnSelectionChanged (object sender, EventArgs args)
 		{
 			base.OnSelectionChanged (sender, args);

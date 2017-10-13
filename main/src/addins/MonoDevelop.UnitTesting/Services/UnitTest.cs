@@ -50,7 +50,7 @@ namespace MonoDevelop.UnitTesting
 		WorkspaceObject ownerSolutionItem;
 		SolutionItem ownerSolutionEntityItem;
 		UnitTestResultsStore results;
-		bool historicResult;
+		protected bool historicResult;
 		bool resultLoaded;
 		
 		public string FixtureTypeNamespace {
@@ -130,7 +130,7 @@ namespace MonoDevelop.UnitTesting
 			}
 		}
 		
-		public UnitTestResult GetLastResult ()
+		public virtual UnitTestResult GetLastResult ()
 		{
 			if (!resultLoaded) {
 				resultLoaded = true;
@@ -141,9 +141,14 @@ namespace MonoDevelop.UnitTesting
 			return lastResult;
 		}
 		
-		public void ResetLastResult ()
+		public virtual void ResetLastResult ()
 		{
 			historicResult = true;
+			OnTestStatusChanged ();
+		}
+
+		public virtual void RefreshResult ()
+		{
 			OnTestStatusChanged ();
 		}
 
@@ -341,7 +346,7 @@ namespace MonoDevelop.UnitTesting
 			IResultsStore store = GetResultsStore ();
 			if (store != null)
 				store.RegisterResult (ActiveConfiguration, this, result);
-			OnTestStatusChanged ();
+				OnTestStatusChanged ();
 		}
 		
 		IResultsStore GetResultsStore ()

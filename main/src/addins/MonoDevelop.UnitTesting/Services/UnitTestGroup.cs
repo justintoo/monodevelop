@@ -33,6 +33,8 @@ using System.Collections;
 using MonoDevelop.Projects;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace MonoDevelop.UnitTesting
 {
@@ -60,7 +62,49 @@ namespace MonoDevelop.UnitTesting
 				return false;
 			}
 		}
-		
+
+		public override void RefreshResult ()
+		{
+			foreach (var test in new List<UnitTest> (Tests))
+				test.RefreshResult ();
+			base.RefreshResult ();
+		}
+
+		public override void ResetLastResult ()
+		{
+			foreach (var t in new List<UnitTest> (Tests))
+				t.ResetLastResult();
+			base.ResetLastResult ();
+		}
+
+		public override UnitTestResult GetLastResult ()
+		{
+			var results = Tests.Select (tst => tst.GetLastResult ());
+			var passed = results.Sum (t => t.Passed);
+			var errors = results.Sum (t => t.Errors);
+			var failures = results.Sum (t => t.Failures);
+			var skipped = results.Sum (t => t.Skipped);
+			var resultStatus = ResultStatus.Inconclusive;
+			var uniqe = results.Distinct ();
+			var count = uniqe.Count ();
+			historicResult = Tests.Any (t => t.IsHistoricResult); ;
+
+			if (count == 1)
+				resultStatus = uniqe.First ().Status;
+			else if(uniqe.Any(u => u.IsFailure))  
+				resultStatus = ResultStatus.Inconclusive;
+			
+			var result = new UnitTestResult () {
+				Status = resultStatus,
+				Passed = passed,
+				Errors = errors,
+				Skipped = skipped,
+				Failures = failures
+			};
+
+			return result;
+		}
+
 		public UnitTestCollection Tests {
 			get {
 				if (tests == null) {
