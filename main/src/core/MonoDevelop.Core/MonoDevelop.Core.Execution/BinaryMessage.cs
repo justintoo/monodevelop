@@ -230,51 +230,101 @@ namespace MonoDevelop.Core.Execution
 			Array array = (Array)val;
 			bw.Write (array.Length);
 
-			var et = val.GetType ().GetElementType ();
+			var type = val.GetType ();
+			var et = type.GetElementType ();
+			var rank = array.Rank;
 
-			if (et == typeof(byte)) {
-				bw.Write ((byte)TypeCode.Byte);
-				bw.Write ((byte [])val);
-			} else if (et == typeof(short)) {
-				bw.Write ((byte)TypeCode.Int16);
-				foreach (var v in (short [])val)
-					bw.Write (v);
-			} else if (et == typeof(int)) {
-				bw.Write ((byte)TypeCode.Int32);
-				foreach (var v in (int [])val)
-					bw.Write (v);
-			} else if (et == typeof(long)) {
-				bw.Write ((byte)TypeCode.Int64);
-				foreach (var v in (long [])val)
-					bw.Write (v);
-			} else if (et == typeof(float)) {
-				bw.Write ((byte)TypeCode.Single);
-				foreach (var v in (float [])val)
-					bw.Write (v);
-			} else if (et == typeof(double)) {
-				bw.Write ((byte)TypeCode.Double);
-				foreach (var v in (double [])val)
-					bw.Write (v);
-			} else if (et == typeof(string)) {
-				bw.Write ((byte)TypeCode.String);
-				foreach (var v in (string [])val)
-					bw.Write (v ?? NullString);
-			} else if (et == typeof(bool)) {
-				bw.Write ((byte)TypeCode.Boolean);
-				foreach (var v in (bool [])val)
-					bw.Write (v);
-			} else if (et == typeof(DateTime)) {
-				bw.Write ((byte)TypeCode.DateTime);
-				foreach (var v in (DateTime [])val)
-					bw.Write (v.Ticks);
-			} else if (et == typeof(TimeSpan)) {
-				bw.Write ((byte)TypeCode.TimeSpan);
-				foreach (var v in (TimeSpan [])val)
-					bw.Write (v.Ticks);
+			if (rank == 1) {
+				if (et == typeof (byte)) {
+					bw.Write ((byte)TypeCode.Byte);
+					bw.Write ((byte [])val);
+				} else if (et == typeof (short)) {
+					bw.Write ((byte)TypeCode.Int16);
+					foreach (var v in (short [])val)
+						bw.Write (v);
+				} else if (et == typeof (int)) {
+					bw.Write ((byte)TypeCode.Int32);
+					foreach (var v in (int [])val)
+						bw.Write (v);
+				} else if (et == typeof (long)) {
+					bw.Write ((byte)TypeCode.Int64);
+					foreach (var v in (long [])val)
+						bw.Write (v);
+				} else if (et == typeof (float)) {
+					bw.Write ((byte)TypeCode.Single);
+					foreach (var v in (float [])val)
+						bw.Write (v);
+				} else if (et == typeof (double)) {
+					bw.Write ((byte)TypeCode.Double);
+					foreach (var v in (double [])val)
+						bw.Write (v);
+				} else if (et == typeof (string)) {
+					bw.Write ((byte)TypeCode.String);
+					foreach (var v in (string [])val)
+						bw.Write (v ?? NullString);
+				} else if (et == typeof (bool)) {
+					bw.Write ((byte)TypeCode.Boolean);
+					foreach (var v in (bool [])val)
+						bw.Write (v);
+				} else if (et == typeof (DateTime)) {
+					bw.Write ((byte)TypeCode.DateTime);
+					foreach (var v in (DateTime [])val)
+						bw.Write (v.Ticks);
+				} else if (et == typeof (TimeSpan)) {
+					bw.Write ((byte)TypeCode.TimeSpan);
+					foreach (var v in (TimeSpan [])val)
+						bw.Write (v.Ticks);
+				} else {
+					bw.Write ((byte)TypeCode.Object);
+					foreach (var elem in array)
+						WriteValue (bw, elem);
+				}
 			} else {
-				bw.Write ((byte)TypeCode.Object);
-				foreach (var elem in array)
-					WriteValue (bw, elem);
+				if (et == typeof (byte)) {
+					bw.Write ((byte)TypeCode.Byte);
+					foreach (byte v in array)
+						bw.Write (v);
+				} else if (et == typeof (short)) {
+					bw.Write ((byte)TypeCode.Int16);
+					foreach (short v in array)
+						bw.Write (v);
+				} else if (et == typeof (int)) {
+					bw.Write ((byte)TypeCode.Int32);
+					foreach (int v in array)
+						bw.Write (v);
+				} else if (et == typeof (long)) {
+					bw.Write ((byte)TypeCode.Int64);
+					foreach (long v in array)
+						bw.Write (v);
+				} else if (et == typeof (float)) {
+					bw.Write ((byte)TypeCode.Single);
+					foreach (float v in array)
+						bw.Write (v);
+				} else if (et == typeof (double)) {
+					bw.Write ((byte)TypeCode.Double);
+					foreach (double v in array)
+						bw.Write (v);
+				} else if (et == typeof (string)) {
+					bw.Write ((byte)TypeCode.String);
+					foreach (string v in array)
+						bw.Write (v ?? NullString);
+				} else if (et == typeof (bool)) {
+					bw.Write ((byte)TypeCode.Boolean);
+					foreach (bool v in array)
+						bw.Write (v);
+				} else if (et == typeof (DateTime)) {
+					bw.Write ((byte)TypeCode.DateTime);
+					foreach (DateTime v in array)
+						bw.Write (v.Ticks);
+				} else if (et == typeof (TimeSpan)) {
+					bw.Write ((byte)TypeCode.TimeSpan);
+					foreach (TimeSpan v in array)
+						bw.Write (v.Ticks);
+				} else {
+					bw.Write ((byte)TypeCode.Object);
+					foreach (var elem in array)
+						WriteValue (bw, elem);
+				}
 			}
 		}
 
